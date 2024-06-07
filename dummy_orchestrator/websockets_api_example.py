@@ -26,7 +26,7 @@ def get_history(prompt_id):
     with urllib.request.urlopen("http://{}/history/{}".format(server_address, prompt_id)) as response:
         return json.loads(response.read())
 
-async def get_images(ws, prompt):
+def get_images(ws, prompt):
     prompt_id = queue_prompt(prompt)['prompt_id']
     output_images = {}
     while True:
@@ -55,127 +55,106 @@ async def get_images(ws, prompt):
 
 prompt_text = """
 {
-  "3": {
-    "inputs": {
-      "seed": 156680208700286,
-      "steps": 20,
-      "cfg": 8,
-      "sampler_name": "euler",
-      "scheduler": "normal",
-      "denoise": 1,
-      "model": [
-        "4",
-        0
-      ],
-      "positive": [
-        "6",
-        0
-      ],
-      "negative": [
-        "7",
-        0
-      ],
-      "latent_image": [
-        "5",
-        0
-      ]
+    "3": {
+        "class_type": "KSampler",
+        "inputs": {
+            "cfg": 8,
+            "denoise": 1,
+            "latent_image": [
+                "5",
+                0
+            ],
+            "model": [
+                "4",
+                0
+            ],
+            "negative": [
+                "7",
+                0
+            ],
+            "positive": [
+                "6",
+                0
+            ],
+            "sampler_name": "euler",
+            "scheduler": "normal",
+            "seed": 8566257,
+            "steps": 20
+        }
     },
-    "class_type": "KSampler",
-    "_meta": {
-      "title": "KSampler"
-    }
-  },
-  "4": {
-    "inputs": {
-      "ckpt_name": "v1-5-pruned-emaonly.ckpt"
+    "4": {
+        "class_type": "CheckpointLoaderSimple",
+        "inputs": {
+            "ckpt_name": "v1-5-pruned-emaonly.ckpt"
+        }
     },
-    "class_type": "CheckpointLoaderSimple",
-    "_meta": {
-      "title": "Load Checkpoint"
-    }
-  },
-  "5": {
-    "inputs": {
-      "width": 512,
-      "height": 512,
-      "batch_size": 1
+    "5": {
+        "class_type": "EmptyLatentImage",
+        "inputs": {
+            "batch_size": 1,
+            "height": 512,
+            "width": 512
+        }
     },
-    "class_type": "EmptyLatentImage",
-    "_meta": {
-      "title": "Empty Latent Image"
-    }
-  },
-  "6": {
-    "inputs": {
-      "text": "beautiful scenery nature glass bottle landscape, , purple galaxy bottle,",
-      "clip": [
-        "4",
-        1
-      ]
+    "6": {
+        "class_type": "CLIPTextEncode",
+        "inputs": {
+            "clip": [
+                "4",
+                1
+            ],
+            "text": "masterpiece best quality girl"
+        }
     },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIP Text Encode (Prompt)"
-    }
-  },
-  "7": {
-    "inputs": {
-      "text": "text, watermark",
-      "clip": [
-        "4",
-        1
-      ]
+    "7": {
+        "class_type": "CLIPTextEncode",
+        "inputs": {
+            "clip": [
+                "4",
+                1
+            ],
+            "text": "bad hands"
+        }
     },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIP Text Encode (Prompt)"
-    }
-  },
-  "8": {
-    "inputs": {
-      "samples": [
-        "3",
-        0
-      ],
-      "vae": [
-        "4",
-        2
-      ]
+    "8": {
+        "class_type": "VAEDecode",
+        "inputs": {
+            "samples": [
+                "3",
+                0
+            ],
+            "vae": [
+                "4",
+                2
+            ]
+        }
     },
-    "class_type": "VAEDecode",
-    "_meta": {
-      "title": "VAE Decode"
+    "9": {
+        "class_type": "SaveImage",
+        "inputs": {
+            "filename_prefix": "ComfyUI",
+            "images": [
+                "8",
+                0
+            ]
+        }
     }
-  },
-  "9": {
-    "inputs": {
-      "filename_prefix": "ComfyUI",
-      "images": [
-        "8",
-        0
-      ]
-    },
-    "class_type": "SaveImage",
-    "_meta": {
-      "title": "Save Image"
-    }
-  }
 }
 """
-import random
+
 prompt = json.loads(prompt_text)
 #set the text prompt for our positive CLIPTextEncode
+prompt["6"]["inputs"]["text"] = "masterpiece best quality man"
 
-ws = websocket.WebSocket()
-ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
-images = get_images(ws, prompt)
+#set the seed for our KSampler node
+prompt["3"]["inputs"]["seed"] = 5
 
 #Commented out code to display the output images:
 
-for node_id in images:
-     for (i, image_data) in enumerate(images[node_id]):
-         from PIL import Image
-         import io
-         image = Image.open(io.BytesIO(image_data))
-         image.save(f"output_{node_id}_{i}.png")
+# for node_id in images:
+#     for image_data in images[node_id]:
+#         from PIL import Image
+#         import io
+#         image = Image.open(io.BytesIO(image_data))
+#         image.show()
 

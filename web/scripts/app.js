@@ -2107,9 +2107,12 @@ export class ComfyApp {
 
 		// TODO: Set up POST request for .JSON + IMG file (for image prompts)
 		// 			- Use FormData to send both .JSON and .IMG files
-		//			- Need to hit /upload/image endpoint from myra orchestrator to gpu server
+		//			- Need to hit /upload/image endpoint for orchestrator to gpu server
 
-		// Send the prompt to the orchestrator		
+		// Send the prompt to the orchestrator
+
+		// Setup websocket with orchestrator itself to save output images directly?
+
 		await this.queuePrompt(1, batchCount);
 
 	}
