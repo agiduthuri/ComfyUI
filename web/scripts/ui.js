@@ -436,8 +436,8 @@ export class ComfyUI {
 			]),
 			$el("button.comfy-queue-btn", {
 				id: "queue-button",
-				textContent: "Queue Prompt",
-				onclick: () => app.queuePrompt(0, this.batchCount),
+				textContent: "Queue Prompt (do nothing)",
+				onclick: () => app.sendPromptToOrchestration(this.batchCount) // app.queuePrompt(0, this.batchCount),
 			}),
 			$el("div", {}, [
 				$el("label", {innerHTML: "Extra options"}, [

@@ -197,6 +197,11 @@ class PromptServer():
             else:
                 return web.Response(status=400)
 
+        # TODO: Implement the following routes
+        @routes.post("/upload/output")
+        async def upload_output(request):
+            pass
+
         @routes.post("/upload/image")
         async def upload_image(request):
             post = await request.post()

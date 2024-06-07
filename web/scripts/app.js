@@ -2100,6 +2100,20 @@ export class ComfyApp {
 		return `Error occurred when executing ${nodeType}:\n\n${error.exception_message}\n\n${traceback}`
 	}
 
+	async sendPromptToOrchestration(batchCount = 1) {
+		// TODO: Set up address of Myra orchestrator to send prompts to
+
+		// TODO: Set up POST request for .JSON
+
+		// TODO: Set up POST request for .JSON + IMG file (for image prompts)
+		// 			- Use FormData to send both .JSON and .IMG files
+		//			- Need to hit /upload/image endpoint from myra orchestrator to gpu server
+
+		// Send the prompt to the orchestrator		
+		await this.queuePrompt(1, batchCount);
+
+	}
+
 	async queuePrompt(number, batchCount = 1) {
 		this.#queueItems.push({ number, batchCount });
 
