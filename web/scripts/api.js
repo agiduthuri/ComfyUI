@@ -186,8 +186,18 @@ class ComfyApi extends EventTarget {
 	 * @returns The node definitions
 	 */
 	async getNodeDefs() {
+		// Load node definitions from a config file instead of the python server
+		try {
+			const data = await fetch("../default_node_defs.json").then((response) => response.json());
+			return data;
+		} catch (error) {
+			console.error("Failed to load node definitions from config file:", error);
+			return {};
+		}
+		/*
 		const resp = await this.fetchApi("/object_info", { cache: "no-store" });
 		return await resp.json();
+		*/
 	}
 
 	/**
