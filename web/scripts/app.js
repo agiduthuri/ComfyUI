@@ -2309,6 +2309,7 @@ export class ComfyApp {
 
 	/**
 	 * Refresh combo list on whole nodes
+	 * Called onClick of refresh button
 	 */
 	async refreshComboInNodes() {
 		const defs = await api.getNodeDefs();
